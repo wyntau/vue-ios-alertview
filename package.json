@@ -1,0 +1,27 @@
+{
+  "name": "vue-ios-alertview",
+  "version": "0.1.0",
+  "description": "iOS7+ style alertview service for Vue.",
+  "main": "vue-ios-alertview.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Treri/vue-ios-alertview.git"
+  },
+  "keywords": [
+    "Vue",
+    "iOS",
+    "UIAlertView"
+  ],
+  "author": "Treri",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Treri/vue-ios-alertview/issues"
+  },
+  "homepage": "https://github.com/Treri/vue-ios-alertview#readme"
+}
