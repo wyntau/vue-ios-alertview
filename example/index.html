@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, minimal-ui" />
+  <title>vue-ios-alertview</title>
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+  <style>
+    html{
+      font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    }
+    .wrap{
+      width: 500px;
+      margin: 10px auto 0;
+    }
+    .demo{
+      margin-bottom: 20px;
+    }
+    pre{
+      margin: 0;
+    }
+    .output, .desc{
+      margin: 10px 0;
+    }
+    .pure-form legend{
+      border-bottom: none;
+      border-top: 1px solid #e5e5e5;
+      padding-top: 10px;
+      padding-bottom: 0;
+      margin-bottom: 0;
+      font-weight: bold;
+    }
+    .button-success,
+    .button-error,
+    .button-warning,
+    .button-secondary {
+        color: white;
+        border-radius: 4px;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+    .button-success {
+        background: rgb(28, 184, 65); /* this is a green */
+    }
+    .button-error {
+        background: rgb(202, 60, 60); /* this is a maroon */
+    }
+    .button-warning {
+        background: rgb(223, 117, 20); /* this is an orange */
+    }
+    .button-secondary {
+        background: rgb(66, 184, 221); /* this is a light blue */
+    }
+  </style>
+  <link rel="stylesheet" href="../vue-ios-alertview.css">
+  <script src="https://unpkg.com/vue@2.0.3/dist/vue.min.js"></script>
+  <script src="../vue-ios-alertview.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <div id="alert" class="demo">
+      <form action="" class="pure-form">
+        <fieldset>
+          <legend>vm.$iosAlert</legend>
+          <div class="desc"></div>
+          <pre><code>
+    vm.$iosAlert('alert');
+          </code></pre>
+          <div class="output">
+            output: {{output | json}}
+          </div>
+          <button type="button" class="pure-button button-warning" @click="alert()">demo</button>
+      </form>
+    </div>
+    <script>
+      new Vue({
+        el: '#alert',
+        data: {
+          output: null
+        },
+        methods: {
+          alert: function(){
+            var self = this;
+            this.$iosAlert('alert').then(function(){
+              self.output = 'resolved';
+            });
+          }
+        }
+      });
+    </script>
+
+    <div id="confirm" class="demo">
+      <form action="" class="pure-form">
+        <fieldset>
+          <legend>vm.$iosComfirm</legend>
+          <div class="desc"></div>
+          <pre><code>
+    vm.$iosComfirm('confirm?');
+          </code></pre>
+          <div class="output">
+            output: {{output | json}}
+          </div>
+          <button type="button" class="pure-button button-secondary" @click="confirm()">demo</button>
+      </form>
+    </div>
+    <script>
+      new Vue({
+        el: '#confirm',
+        data: {
+          output: null
+        },
+        methods: {
+          confirm: function(){
+            var self = this;
+            self.$iosConfirm('confirm?').then(function(){
+              self.output = 'resolved';
+            }, function(){
+              self.output = 'rejected';
+            });
+          }
+        }
+      });
+    </script>
+
+    <div id="prompt" class="demo">
+      <form action="" class="pure-form">
+        <fieldset>
+          <legend>vm.$iosPrompt</legend>
+          <div class="desc"></div>
+          <pre><code>
+    vm.$iosPrompt({
+      text: 'prompt',
+      placeholder: 'inputPlaceholder'
+    });
+          </code></pre>
+          <div class="output">
+            output: {{output | json}}
+          </div>
+          <button type="button" class="pure-button button-secondary" @click="prompt()">demo</button>
+      </form>
+    </div>
+    <script>
+      new Vue({
+        el: '#prompt',
+        data: {
+          output: null
+        },
+        methods: {
+          prompt: function(){
+            var self = this;
+            this.$iosPrompt({
+              text: 'prompt',
+              placeholder: 'inputPlaceholder'
+            }).then(function(value){
+              self.output = value;
+            }, function(){
+              self.output = 'rejected';
+            });
+          }
+        }
+      });
+    </script>
+
+    <div id="remind" class="demo">
+      <form action="" class="pure-form">
+        <fieldset>
+          <legend>vm.$iosRemind</legend>
+          <div class="desc"></div>
+          <pre><code>
+    vm.$iosRemind('remind');
+          </code></pre>
+          <div class="output">
+            output: {{output | json}}
+          </div>
+          <button type="button" class="pure-button button-warning" @click="remind()">demo</button>
+      </form>
+    </div>
+    <script>
+      new Vue({
+        el: '#remind',
+        data: {
+          output: null
+        },
+        methods: {
+          remind: function(){
+            var self = this;
+            this.$iosRemind('remind').then(function(value){
+              self.output = 'resolved';
+            }, function(){
+              self.output = 'rejected';
+            });
+          }
+        }
+      });
+    </script>
+
+    <div id="alertview" class="demo">
+      <form action="" class="pure-form">
+        <fieldset>
+          <legend>vm.$iosAlertView</legend>
+          <div class="desc"></div>
+          <pre><code>
+    vm.$iosAlertView({
+      title: 'insl',
+      text: 'text',
+      buttons: [
+        {
+          text: 'label1',
+          onClick: function(){
+            vm.$iosAlert('label1');
+          }
+        },
+        {
+          text: 'label2',
+          onClick: function(){
+            vm.$iosAlert('label2');
+          }
+        },
+        {
+          text: 'label3',
+          onClick: function(){
+            vm.$iosRemind({
+              text: 'label3',
+              remindDuration: 1000
+            });
+          }
+        }
+      ]
+    });
+          </code></pre>
+          <!--<div class="output">
+            output: {{output | json}}
+          </div>-->
+          <button type="button" class="pure-button button-success" @click="demo()">demo</button>
+      </form>
+    </div>
+
+    <script>
+      new Vue({
+        el: '#alertview',
+        data: {
+          output: null
+        },
+        methods: {
+          demo: function(){
+            var self = this;
+            self.$iosAlertView({
+              title: 'insl',
+              text: 'text',
+              buttons: [
+                {
+                  text: 'label1',
+                  onClick: function(){
+                    self.$iosAlert('label1');
+                  }
+                },
+                {
+                  text: 'label2',
+                  onClick: function(){
+                    self.$iosAlert('label2');
+                  }
+                },
+                {
+                  text: 'label3',
+                  onClick: function(){
+                    self.$iosRemind({
+                      text: 'label3',
+                      remindDuration: 1000
+                    });
+                  }
+                }
+              ]
+            });
+          }
+        }
+      });
+    </script>
+
+  </div>
+  <a href="https://github.com/Treri/vue-ios-alertview"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+</body>
+</html>
