@@ -6,7 +6,10 @@
         define(["require", "exports"], factory);
     }
     else {
-      factory();
+      var IosAlertView = factory();
+      if(typeof window !== 'undefined'){
+        window.IosAlertView = IosAlertView;
+      }
     }
 })(function (require, exports) {
   "use strict";
@@ -27,7 +30,40 @@
     '</transition>'
   ].join('');
 
-  var IosAlertView = Vue.extend({
+  // css 动画执行的时间
+  var ANIMATION_TIME = 400;
+
+  // 默认选项
+  var defaults = {
+    defaultOption: 'title',
+    title: null,
+    text: null,
+    input: false,
+    placeholder: '',
+    cancelText: 'Cancel',
+    okText: 'OK',
+    remindDuration: 650
+  };
+
+  // a mini defer like angular's $q.defer()
+  var defer = function(){
+    var promise;
+    var resolve;
+    var reject;
+
+    promise = new Promise(function(_resolve_, _reject_){
+      resolve = _resolve_;
+      reject = _reject_;
+    });
+
+    return {
+      promise: promise,
+      resolve: resolve,
+      reject: reject
+    };
+  };
+
+  var IosAlertViewComponent = Vue.extend({
     template: template,
     data: function () {
       return {
@@ -44,19 +80,24 @@
       'remindDuration',
       'buttons'
     ],
-    mounted: function () {
-      var self = this;
-      self.$nextTick(function () {
+    methods: {
+      activate: function(){
+        var self = this;
+
+        self._deferred = defer();
+
         self.showModal = true;
 
-        if (!self.buttons || !self.buttons.length) {
-          setTimeout(function () {
+        // no buttons, remind (ANIMATION_TIME + remindDuration) time, then auto remove
+        if(!self.buttons || !self.buttons.length){
+          setTimeout(function(){
             self.showModal = false;
-          }, 400 + self.remindDuration || 650);
+            self._deferred.resolve();
+          }, ANIMATION_TIME + self.remindDuration);
         }
-      });
-    },
-    methods: {
+
+        return self._deferred.promise;
+      },
       onClick: function (button, index) {
         var cbkData = {
           index: index,
@@ -68,6 +109,7 @@
           button.onClick(cbkData);
         }
 
+        this._deferred.resolve(cbkData);
         this.showModal = false;
       },
       afterLeave: function () {
@@ -76,31 +118,35 @@
     }
   });
 
-  var defaults = {
-    defaultOption: 'title',
-    title: null,
-    text: null,
-    input: false,
-    placeholder: '',
-    cancelText: 'Cancel',
-    okText: 'OK',
-    remindDuration: 650
-  };
+  function getPropsData(options){
+    options = options || {};
 
-  function openIosAlertView(propsData) {
-    var instance = new IosAlertView({propsData: propsData || {}});
+    var propsData = Vue.util.extend({}, defaults);
+
+    if (typeof options === 'string') {
+      propsData[defaults.defaultOption] = options;
+    } else {
+      propsData = Vue.util.extend(propsData, options);
+    }
+
+    return propsData;
+  }
+
+  function IosAlertView(options) {
+    var propsData = getPropsData(options);
+
+    var instance = new IosAlertViewComponent({propsData: propsData});
 
     var mount = document.createElement('div');
-    var mountId = 'ios-alert-view-' + Date.now();
-
-    mount.id = mountId;
-
+    mount.id = 'ios-alert-view-' + Date.now();
     document.body.appendChild(mount);
 
     instance.$mount(mount);
+
+    return instance.activate();
   }
 
-  openIosAlertView.install = function (Vue, globalOptions) {
+  IosAlertView.install = function (Vue, globalOptions) {
 
     globalOptions = globalOptions || {};
 
@@ -108,113 +154,86 @@
       throw 'Expect Object options';
     }
 
-    var defaultOption = globalOptions.defaultOption || defaults.defaultOption;
+    // override defaults
+    defaults = Vue.util.extend(defaults, globalOptions);
 
-    Vue.prototype.$iosAlertView = openIosAlertView;
+    var defaultOption = defaults.defaultOption;
+
+    Vue.prototype.$iosAlertView = IosAlertView;
 
     Vue.prototype.$iosAlert = function (options) {
+      var deferred = defer();
+      var propsData = getPropsData(options);
 
-      options = options || '';
+      propsData.buttons = [
+        {
+          text: propsData.okText,
+          onClick: deferred.resolve,
+          bold: true
+        }
+      ];
 
-      var propsData = Vue.util.extend({}, defaults);
-      if (typeof options === 'string') {
-        propsData[defaultOption] = options;
-      } else {
-        propsData = Vue.util.extend(propsData, options);
-      }
+      IosAlertView(propsData);
 
-      return new Promise(function (resolve, reject) {
-        propsData.buttons = [
-          {
-            text: propsData.okText,
-            onClick: resolve,
-            bold: true
-          }
-        ];
-
-        openIosAlertView(propsData);
-      });
+      return deferred.promise;
     };
 
     Vue.prototype.$iosConfirm = function(options){
-      options = options || '';
+      var deferred = defer();
+      var propsData = getPropsData(options);
 
-      var propsData = Vue.util.extend({}, defaults);
-      if (typeof options === 'string') {
-        propsData[defaultOption] = options;
-      } else {
-        propsData = Vue.util.extend(propsData, options);
-      }
+      propsData.buttons = [
+        {
+          text: propsData.cancelText,
+          onClick: deferred.reject
+        },
+        {
+          text: propsData.okText,
+          onClick: deferred.resolve,
+          bold: true
+        }
+      ];
 
-      return new Promise(function(resolve, reject){
-        propsData.buttons = [
-          {
-            text: propsData.cancelText,
-            onClick: reject
-          },
-          {
-            text: propsData.okText,
-            onClick: resolve,
-            bold: true
-          }
-        ];
+      IosAlertView(propsData);
 
-        openIosAlertView(propsData);
-      });
+      return deferred.promise;
     };
 
     Vue.prototype.$iosPrompt = function(options){
-      options = options || '';
-
-      var propsData = Vue.util.extend({}, defaults);
-      if (typeof options === 'string') {
-        propsData[defaultOption] = options;
-      } else {
-        propsData = Vue.util.extend(propsData, options);
-      }
+      var deferred = defer();
+      var propsData = getPropsData(options);
 
       propsData.input = true;
 
-      return new Promise(function(resolve, reject){
-        propsData.buttons = [
-          {
-            text: propsData.cancelText,
-            onClick: reject
+      propsData.buttons = [
+        {
+          text: propsData.cancelText,
+          onClick: deferred.reject
+        },
+        {
+          text: propsData.okText,
+          onClick: function (data) {
+            deferred.resolve(data.value);
           },
-          {
-            text: propsData.okText,
-            onClick: function (data) {
-              resolve(data.value);
-            },
-            bold: true
-          }
-        ];
+          bold: true
+        }
+      ];
 
-        openIosAlertView(propsData);
-      });
+      IosAlertView(propsData);
+
+      return deferred.promise;
     };
 
     Vue.prototype.$iosRemind = function(options){
-      options = options || '';
-
-      var propsData = Vue.util.extend({}, defaults);
-      if (typeof options === 'string') {
-        propsData[defaultOption] = options;
-      } else {
-        propsData = Vue.util.extend(propsData, options);
-      }
-
-      return new Promise(function(resolve, reject){
-        openIosAlertView(propsData);
-        setTimeout(resolve, 400 + propsData.remindDuration);
-      });
+      var propsData = getPropsData(options);
+      return IosAlertView(propsData);
     };
   };
 
   if(typeof window !== 'undefined' && window.Vue){
-    window.Vue.use(openIosAlertView.install);
+    window.Vue.use(IosAlertView);
   }
 
-  return openIosAlertView;
+  return IosAlertView;
 });
 
