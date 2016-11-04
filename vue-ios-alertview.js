@@ -100,7 +100,8 @@
     instance.$mount(mount);
   }
 
-  function install(Vue, globalOptions) {
+  openIosAlertView.install = function (Vue, globalOptions) {
+
     globalOptions = globalOptions || {};
 
     if (typeof globalOptions !== 'object') {
@@ -211,9 +212,9 @@
   };
 
   if(window && window.Vue){
-    window.Vue.use(install);
+    window.Vue.use(openIosAlertView.install);
   }
 
-  return install;
+  return openIosAlertView;
 });
 
