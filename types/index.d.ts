@@ -5,13 +5,18 @@ import { PluginFunction } from 'vue';
 
 export = VueIosAlertView;
 
-declare interface VueIosAlertView<T> {
-  (options: string | VueIosAlertView.VueIosAlertViewOption): PromiseLike<T>;
-}
-
-declare function VueIosAlertView(strictOptions: VueIosAlertView.VueIosAlertViewOption): PromiseLike<VueIosAlertView.VueIosAlertViewButtonData>;
+declare let VueIosAlertView: PluginFunction<VueIosAlertView.VueIosAlertViewOption>
 
 declare namespace VueIosAlertView {
+
+  export interface VueIosAlertView<T> {
+    (options: string | VueIosAlertView.VueIosAlertViewOption): PromiseLike<T>;
+  }
+
+  export interface VueIosAlertViewStrict {
+    (strictOptions: VueIosAlertView.VueIosAlertViewOption): PromiseLike<VueIosAlertView.VueIosAlertViewButtonData>;
+  }
+
   export interface VueIosAlertViewButton {
     text: string;
     bold?: boolean;
@@ -36,8 +41,6 @@ declare namespace VueIosAlertView {
     buttons?: Array<VueIosAlertViewButton>;
     [key: string]: any;
   }
-
-  export const install: PluginFunction<VueIosAlertViewOption>;
 }
 
 

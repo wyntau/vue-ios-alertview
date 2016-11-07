@@ -6,9 +6,8 @@
         define(["require", "exports"], factory);
     }
     else {
-      var IosAlertView = factory();
-      if(typeof window !== 'undefined'){
-        window.IosAlertView = IosAlertView;
+      if(typeof window !== 'undefined' && window.Vue){
+        window.Vue.use(factory());
       }
     }
 })(function (require, exports) {
@@ -63,95 +62,94 @@
     };
   };
 
-  var IosAlertViewComponent = Vue.extend({
-    template: template,
-    data: function () {
-      return {
-        value: '',
-        showModal: false
-      };
-    },
-    props: [
-      'title',
-      'text',
-      'input',
-      'placeholder',
-      'onClick',
-      'remindDuration',
-      'buttons'
-    ],
-    methods: {
-      activate: function(){
-        var self = this;
-
-        self._deferred = defer();
-
-        self.showModal = true;
-
-        // no buttons, remind (ANIMATION_TIME + remindDuration) time, then auto remove
-        if(!self.buttons || !self.buttons.length){
-          setTimeout(function(){
-            self.showModal = false;
-            self._deferred.resolve();
-          }, ANIMATION_TIME + self.remindDuration);
-        }
-
-        return self._deferred.promise;
-      },
-      onClick: function (button, index) {
-        var cbkData = {
-          index: index,
-          button: button,
-          value: this.value
+  return function(Vue, globalOptions){
+    var IosAlertViewComponent = Vue.extend({
+      template: template,
+      data: function () {
+        return {
+          value: '',
+          showModal: false
         };
-
-        if (typeof button.onClick === 'function') {
-          button.onClick(cbkData);
-        }
-
-        this._deferred.resolve(cbkData);
-        this.showModal = false;
       },
-      afterLeave: function () {
-        this.$destroy();
+      props: [
+        'title',
+        'text',
+        'input',
+        'placeholder',
+        'onClick',
+        'remindDuration',
+        'buttons'
+      ],
+      methods: {
+        activate: function(){
+          var self = this;
+
+          self._deferred = defer();
+
+          self.showModal = true;
+
+          // no buttons, remind (ANIMATION_TIME + remindDuration) time, then auto remove
+          if(!self.buttons || !self.buttons.length){
+            setTimeout(function(){
+              self.showModal = false;
+              self._deferred.resolve();
+            }, ANIMATION_TIME + self.remindDuration);
+          }
+
+          return self._deferred.promise;
+        },
+        onClick: function (button, index) {
+          var cbkData = {
+            index: index,
+            button: button,
+            value: this.value
+          };
+
+          if (typeof button.onClick === 'function') {
+            button.onClick(cbkData);
+          }
+
+          this._deferred.resolve(cbkData);
+          this.showModal = false;
+        },
+        afterLeave: function () {
+          this.$destroy();
+        }
       }
+    });
+
+    function getPropsData(options){
+      options = options || {};
+
+      var propsData = Vue.util.extend({}, defaults);
+
+      if (typeof options === 'string') {
+        propsData[defaults.defaultOption] = options;
+      } else {
+        propsData = Vue.util.extend(propsData, options);
+      }
+
+      return propsData;
     }
-  });
 
-  function getPropsData(options){
-    options = options || {};
+    function IosAlertView(options) {
+      var propsData = getPropsData(options);
 
-    var propsData = Vue.util.extend({}, defaults);
+      var instance = new IosAlertViewComponent({propsData: propsData});
 
-    if (typeof options === 'string') {
-      propsData[defaults.defaultOption] = options;
-    } else {
-      propsData = Vue.util.extend(propsData, options);
+      var mount = document.createElement('div');
+      mount.id = 'ios-alert-view-' + Date.now();
+      document.body.appendChild(mount);
+
+      instance.$mount(mount);
+
+      return instance.activate();
     }
-
-    return propsData;
-  }
-
-  function IosAlertView(options) {
-    var propsData = getPropsData(options);
-
-    var instance = new IosAlertViewComponent({propsData: propsData});
-
-    var mount = document.createElement('div');
-    mount.id = 'ios-alert-view-' + Date.now();
-    document.body.appendChild(mount);
-
-    instance.$mount(mount);
-
-    return instance.activate();
-  }
-
-  IosAlertView.install = function (Vue, globalOptions) {
 
     globalOptions = globalOptions || {};
 
     if (typeof globalOptions !== 'object') {
-      throw 'Expect Object options';
+      throw new Error('Expect Object options');
     }
 
     // override defaults
@@ -228,12 +226,6 @@
       var propsData = getPropsData(options);
       return IosAlertView(propsData);
     };
-  };
-
-  if(typeof window !== 'undefined' && window.Vue){
-    window.Vue.use(IosAlertView);
   }
-
-  return IosAlertView;
 });
 
