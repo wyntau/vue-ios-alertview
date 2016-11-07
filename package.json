@@ -1,8 +1,9 @@
 {
   "name": "vue-ios-alertview",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "iOS7+ style alertview service for Vue.",
   "main": "vue-ios-alertview.js",
+  "types": "types/index.d.ts",
   "directories": {
     "example": "example"
   },
@@ -23,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/Treri/vue-ios-alertview/issues"
   },
-  "homepage": "https://github.com/Treri/vue-ios-alertview#readme"
+  "homepage": "https://github.com/Treri/vue-ios-alertview#readme",
+  "devDependencies": {
+    "vue": "^2.0.5"
+  }
 }
