@@ -3,7 +3,7 @@ import Vue = require('vue');
 import VueIosAlertView = require('./index');
 
 declare module "vue/types/vue" {
-  interface Vue{
+  interface Vue {
     $iosAlert: VueIosAlertView<never>;
     $iosConfirm: VueIosAlertView<never>;
     $iosPrompt: VueIosAlertView<string>;
