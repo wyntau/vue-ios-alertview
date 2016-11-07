@@ -8,6 +8,6 @@ declare module "vue/types/vue" {
     $iosConfirm: VueIosAlertView<never>;
     $iosPrompt: VueIosAlertView<string>;
     $iosRemind: VueIosAlertView<never>;
-    $iosAlertView: VueIosAlertView<VueIosAlertView.VueIosAlertViewButtonData>;
+    $iosAlertView: typeof VueIosAlertView;
   }
 }
