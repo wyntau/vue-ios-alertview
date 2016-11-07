@@ -10,7 +10,8 @@ declare let VueIosAlertView: PluginFunction<VueIosAlertView.VueIosAlertViewOptio
 declare namespace VueIosAlertView {
 
   export interface VueIosAlertView<T> {
-    (options: string | VueIosAlertView.VueIosAlertViewOption): PromiseLike<T>;
+    (defaultOptionValue: string): PromiseLike<T>;
+    (options: VueIosAlertView.VueIosAlertViewOption): PromiseLike<T>;
   }
 
   export interface VueIosAlertViewStrict {
