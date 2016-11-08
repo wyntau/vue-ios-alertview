@@ -5,10 +5,8 @@
     else if (typeof define === 'function' && define.amd) {
         define(["require", "exports"], factory);
     }
-    else {
-      if(typeof window !== 'undefined' && window.Vue){
-        window.Vue.use(factory());
-      }
+    else if(typeof window !== 'undefined' && window.Vue){
+      window.Vue.use(factory());
     }
 })(function (require, exports) {
   "use strict";
@@ -63,6 +61,16 @@
   };
 
   return function(Vue, globalOptions){
+
+    globalOptions = globalOptions || {};
+
+    if (typeof globalOptions !== 'object') {
+      throw new Error('Expect Object options');
+    }
+
+    // override defaults
+    defaults = Vue.util.extend(defaults, globalOptions);
+
     var IosAlertViewComponent = Vue.extend({
       template: template,
       data: function () {
@@ -145,17 +153,6 @@
 
       return instance.activate();
     }
-
-    globalOptions = globalOptions || {};
-
-    if (typeof globalOptions !== 'object') {
-      throw new Error('Expect Object options');
-    }
-
-    // override defaults
-    defaults = Vue.util.extend(defaults, globalOptions);
-
-    var defaultOption = defaults.defaultOption;
 
     Vue.prototype.$iosAlertView = IosAlertView;
 
