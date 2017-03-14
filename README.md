@@ -1,8 +1,8 @@
 ## vue-ios-alertview
 
-Vue port of [angular-ios-alertview](https://github.com/Treri/angular-ios-alertview).
+> iOS7+ style alertview service for Vue 2
 
-iOS7+ style alertview service for Vue.
+Vue port of [angular-ios-alertview](https://github.com/Treri/angular-ios-alertview).
 
 #### Install
 
