@@ -1,5 +1,5 @@
 import defer from './defer.js';
-import IosAlertviewComponent from './iosAlertview.vue';
+import IosAlertviewDefine from './iosAlertview.vue';
 
 // 默认选项
 const defaults = {
@@ -17,6 +17,8 @@ function install(Vue, globalOptions = {}){
   if (typeof globalOptions !== 'object') {
     throw new Error('Expect Object options');
   }
+
+  const IosAlertViewComponent = Vue.extend(IosAlertviewDefine);
 
   // override defaults
   Object.assign(defaults, globalOptions);
