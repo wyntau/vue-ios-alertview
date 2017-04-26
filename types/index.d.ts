@@ -3,7 +3,7 @@ import './vue';
 
 import { PluginFunction } from 'vue';
 
-export = VueIosAlertView;
+export default VueIosAlertView;
 
 declare let VueIosAlertView: PluginFunction<VueIosAlertView.VueIosAlertViewOption>
 
