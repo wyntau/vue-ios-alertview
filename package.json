@@ -8,7 +8,9 @@
     "example": "example"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf dist",
+    "build": "npm run clean && rollup -c build/rollup.config.js && uglifyjs -m -o dist/vue-ios-alertview.min.js -- dist/vue-ios-alertview.js",
+    "yarn": "SASS_BINARY_SITE=http://npm.taobao.org/mirrors/node-sass yarn"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,9 @@
   },
   "homepage": "https://github.com/Treri/vue-ios-alertview#readme",
   "devDependencies": {
-    "vue": "^2.0.5"
+    "rollup": "^0.41.6",
+    "rollup-plugin-vue": "^2.3.1",
+    "uglify-js": "^2.8.22",
+    "vue": "^2.2.6"
   }
 }
