@@ -1,6 +1,6 @@
 {
   "name": "vue-ios-alertview",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "iOS7+ style alertview service for Vue.",
   "main": "dist/vue-ios-alertview.js",
   "types": "types/index.d.ts",
