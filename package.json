@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && rollup -c build/rollup.config.js && uglifyjs -m -o dist/vue-ios-alertview.min.js -- dist/vue-ios-alertview.js",
+    "dev": "rollup -c build/rollup.config.js --watch",
     "yarn": "SASS_BINARY_SITE=http://npm.taobao.org/mirrors/node-sass yarn"
   },
   "repository": {
@@ -31,6 +32,7 @@
     "rollup": "^0.41.6",
     "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-vue": "^2.3.1",
+    "rollup-watch": "^4.0.0",
     "uglify-js": "^2.8.22",
     "vue": "^2.2.6"
   }
